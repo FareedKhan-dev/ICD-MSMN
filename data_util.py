@@ -267,7 +267,7 @@ def load_vocab(path):
         if path.endswith('.bin'):
             model = gensim.models.KeyedVectors.load_word2vec_format(
                 path, binary=True)
-        words = list(model.wv.vocab)
+        words = list(model.wv.index_to_key)
         del model
 
     # hard code to trim word embedding size
@@ -398,7 +398,7 @@ def load_embeddings(embed_file):
         if embed_file.endswith('.bin'):
             model = gensim.models.KeyedVectors.load_word2vec_format(
                 embed_file, binary=True)
-        words = list(model.wv.vocab)
+        words = list(model.wv.index_to_key)
 
         original_word_count = len(words)
 
@@ -415,7 +415,7 @@ def load_embeddings(embed_file):
         new_W = []
         for i in range(len(id2word)):
             if not id2word[i] in ["**UNK**", "**PAD**", "**MASK**"]:
-                new_W.append(model.__getitem__(id2word[i]))
+                new_W.append(model.wv[id2word[i]])
             elif id2word[i] == "**UNK**":
                 print("adding unk embedding")
                 new_W.append(np.random.randn(len(new_W[-1])))
@@ -463,4 +463,3 @@ def load_embeddings(embed_file):
     new_W = np.array(new_W)
     del model
     return new_W
-
